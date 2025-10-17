@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreateTodoListDto } from './dtos/create-todo_list';
-import { UpdateTodoListDto } from './dtos/update-todo_list';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { CreateTodoListDto } from './dtos/create-todo_list';
+import { UpdateTodoListDto } from './dtos/update-todo_list';
 import { TodoList } from './todo_list.entity';
 
 @Injectable()
@@ -17,7 +17,10 @@ export class TodoListsService {
   }
 
   async get(id: number): Promise<TodoList | null> {
-    return await this.todoListRepository.findOneBy({ id });
+    return await this.todoListRepository.findOne({
+      where: { id },
+      relations: ['todoItems'],
+    });
   }
 
   async create(dto: CreateTodoListDto): Promise<TodoList> {

@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CreateTodoListDto {
+export class CreateTodoItemDto {
   @ApiProperty({
-    description: 'Name of the todo list',
-    example: 'Shopping List',
+    description: 'Title of the todo item',
+    example: 'Apple',
     required: true,
     type: String,
     nullable: false,
   })
-  name: string;
+  title: string;
 }
