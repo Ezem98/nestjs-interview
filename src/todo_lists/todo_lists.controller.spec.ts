@@ -1,9 +1,9 @@
-import { Test, TestingModule } from '@nestjs/testing';
-import { TodoListsController } from './todo_lists.controller';
-import { TodoListsService } from './todo_lists.service';
 import { INestApplication } from '@nestjs/common';
+import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { TodoList } from './todo_list.entity';
+import { TodoListsController } from './todo_lists.controller';
+import { TodoListsService } from './todo_lists.service';
 
 describe('TodoListsController', () => {
   let app: INestApplication;
@@ -13,7 +13,7 @@ describe('TodoListsController', () => {
   beforeEach(async () => {
     todoListRepositoryMock = {
       find: jest.fn(),
-      findOneBy: jest.fn(),
+      findOne: jest.fn(),
       save: jest.fn(),
       delete: jest.fn(),
       create: jest.fn(),
@@ -43,8 +43,8 @@ describe('TodoListsController', () => {
   describe('index', () => {
     it('should return all todo lists', async () => {
       const mockTodoLists = [
-        { id: 1, name: 'Shopping List' },
-        { id: 2, name: 'Work Tasks' },
+        { id: 1, name: 'Shopping List', todoItems: [] },
+        { id: 2, name: 'Work Tasks', todoItems: [] },
       ];
 
       todoListRepositoryMock.find.mockResolvedValue(mockTodoLists);
@@ -57,8 +57,8 @@ describe('TodoListsController', () => {
 
   describe('show', () => {
     it('should return a single todo list by id', async () => {
-      const mockTodoList = { id: 1, name: 'Shopping List' };
-      todoListRepositoryMock.findOneBy.mockResolvedValue(mockTodoList);
+      const mockTodoList = { id: 1, name: 'Shopping List', todoItems: [] };
+      todoListRepositoryMock.findOne.mockResolvedValue(mockTodoList);
       const result = await todoListsController.show({ todoListId: 1 });
       expect(result).toEqual(mockTodoList);
     });
@@ -81,10 +81,8 @@ describe('TodoListsController', () => {
   describe('update', () => {
     it('should update an existing todo list', async () => {
       const updateDto = { name: 'Updated List' };
-      const existingTodoList = { id: 1, name: 'Old Name' };
       const updatedTodoList = { id: 1, name: 'Updated List' };
 
-      todoListRepositoryMock.findOneBy.mockResolvedValue(existingTodoList);
       todoListRepositoryMock.save.mockResolvedValue(updatedTodoList);
 
       const result = await todoListsController.update(
